@@ -27,6 +27,7 @@ module.exports = {
           'error',
           { 'argsIgnorePattern': '^_' }
         ],
+        "@typescript-eslint/no-misused-promises": 'off',
         'no-case-declarations': 'off',
         'indent': [
             'error',

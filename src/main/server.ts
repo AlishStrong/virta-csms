@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors';
 import stationTypeRouter from './routers/station-type.router';
 import { API } from './utils/api-paths.enums';
 import middleware from './utils/middleware';

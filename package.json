@@ -8,7 +8,8 @@
     "dev": "ts-node-dev src/index.ts",
     "prod": "node build/index.js",
     "lint": "eslint --ext .ts .",
-    "test": "jest -verbose"
+    "test": "jest --verbose",
+    "test:watch": "jest --watch --verbose"
   },
   "author": "Alisher Aliev",
   "license": "ISC",
@@ -26,6 +27,8 @@
     "typescript": "^4.7.3"
   },
   "dependencies": {
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "express-async-errors": "^3.1.1",
+    "mysql2": "^2.3.3"
   }
 }

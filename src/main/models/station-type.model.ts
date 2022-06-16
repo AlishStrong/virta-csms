@@ -3,3 +3,5 @@ export interface StationType {
   name: string;
   maxPower: number;
 }
+
+export type StationTypeToCreate = Pick<StationType, 'name'> & Pick<StationType, 'maxPower'>;
