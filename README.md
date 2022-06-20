@@ -1,4 +1,4 @@
-# Assignment implementation by Alisher Aliev for Virta Ltd.
+## Assignment implementation by Alisher Aliev for Virta Ltd.
 This an implementation of the assignment that consists of a NodeJS API service
 and a MySQL database service
 
@@ -58,7 +58,8 @@ To run the built project execute the following command:
 ```
 npm run prod
 ```
-You can also built and start the project using Docker-Compose. For that execute the following command:
+
+You can also build and start the project using Docker-Compose. For that execute the following command:
 ```
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ```
@@ -76,7 +77,9 @@ API-endpoints for `Company` entity
 - `DELETE /company/:id` - to delete an existing company;
 <br>
 <br>
+
 **Special endpoint**
+
 - `GET /company/:id/station-data` - to obtain station data (stationId,
 stationName, maxPower) from an existing company identified by the supplied ID and all its children;
 
