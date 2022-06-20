@@ -1,13 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import mysql from 'mysql2/promise';
 import { Errors } from '../utils/error.enums';
 
 const executeQuery = async (sqlQuery: string, params?: any[]) => {
     const connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'password',
-        database: 'csms'
+        host: process.env.MYSQL_HOST,
+        user: process.env.MYSQL_USER,
+        port: +(process.env.MYSQL_PORT || '3306'),
+        password: process.env.MYSQL_PASSWORD,
+        database: process.env.MYSQL_SCHEMA
     });
 
     try {

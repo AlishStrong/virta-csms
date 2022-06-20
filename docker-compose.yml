@@ -1,10 +1,11 @@
-version: "3"
+version: '3'
 services:
     database:
       container_name: csms-database
       image: mysql:debian
+      restart: unless-stopped
       ports:
-       - "3306:3306"  
+       - '3307:3306' 
       environment:
          - MYSQL_ROOT_PASSWORD=password
          - MYSQL_DATABASE=csms
@@ -12,3 +13,24 @@ services:
       volumes:
          - ./mysql:/docker-entrypoint-initdb.d/:ro
       command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_swedish_ci']
+    
+    api-backend: 
+      container_name: api-backend
+      depends_on:
+      - database
+      build:
+        context: .
+        dockerfile: Dockerfile
+        target: dev
+      volumes:
+        - ./src:/home/node/app/src
+      ports:
+        - '3001:3001'
+      environment:
+        - PORT=3001
+        - MYSQL_HOST=database
+        - MYSQL_USER=root
+        - MYSQL_PORT=3306
+        - MYSQL_PASSWORD=password
+        - MYSQL_SCHEMA=csms
+      command: ['npm', 'run', 'dev:docker']

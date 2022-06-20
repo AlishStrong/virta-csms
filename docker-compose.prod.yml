@@ -1,0 +1,6 @@
+version: '3'
+services:    
+  api-backend: 
+      build:
+        target: prod
+      command: ['npm', 'run', 'prod']

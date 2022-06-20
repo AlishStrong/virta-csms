@@ -1,0 +1,8 @@
+node_modules
+.vscode
+mysql
+.eslintignore
+.eslintrc.js
+.gitignore
+.git
+docker-compose.yml
