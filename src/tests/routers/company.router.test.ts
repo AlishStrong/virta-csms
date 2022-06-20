@@ -23,13 +23,17 @@ let createdCompanyThreeId: number;
 
 
 beforeAll(async () => {
+    await executeQuery('DELETE FROM `station_type`');
     await executeQuery('DELETE FROM `company`');
     await executeQuery('DELETE FROM `company_relationship`');
+    await executeQuery('DELETE FROM `station`');
 });
 
 afterAll(async () => {
     await executeQuery('DELETE FROM `station_type`');
+    await executeQuery('DELETE FROM `company`');
     await executeQuery('DELETE FROM `company_relationship`');
+    await executeQuery('DELETE FROM `station`');
 });
 
 describe('CREATE Company', () => {

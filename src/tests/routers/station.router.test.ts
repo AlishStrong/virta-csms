@@ -53,12 +53,12 @@ beforeAll(async () => {
     stationTwo.company_id = createdCompanyId;
 });
 
-// afterAll(async () => {
-//     await executeQuery('DELETE FROM `station_type`');
-//     await executeQuery('DELETE FROM `company`');
-//     await executeQuery('DELETE FROM `company_relationship`');
-//     await executeQuery('DELETE FROM `station`');
-// });
+afterAll(async () => {
+    await executeQuery('DELETE FROM `station_type`');
+    await executeQuery('DELETE FROM `company`');
+    await executeQuery('DELETE FROM `company_relationship`');
+    await executeQuery('DELETE FROM `station`');
+});
 
 test('should populate DB with company and station type', async () => {
     const responseCompanies = await api.get(`${API.COMPANY}/all`)
@@ -81,7 +81,7 @@ describe('CREATE Station', () => {
     });
 
     it ('should still create Station if station_type_id is not provided', async () => {
-        const response = await api.post(`${ API.STATION}`)
+        const response = await api.post(`${API.STATION}`)
             .send(stationTwo)
             .expect(201);
 
@@ -93,7 +93,7 @@ describe('CREATE Station', () => {
     });
 
     it('should not create an existing Station', async () => {
-        const response = await api.post(`${ API.STATION}`)
+        const response = await api.post(`${API.STATION}`)
             .send(stationOne)
             .expect(400);
         expect(response.body).toStrictEqual({ error: Errors.DUPLICATE_ENTRY });
@@ -103,7 +103,7 @@ describe('CREATE Station', () => {
         const noName = {
             company_id: stationOne.company_id
         } as Station;
-        const response = await api.post(`${ API.STATION}`)
+        const response = await api.post(`${API.STATION}`)
             .send(noName)
             .expect(400);
         expect(response.body).toStrictEqual({ error: Errors.WRONG_STRUCTURE });
@@ -113,7 +113,7 @@ describe('CREATE Station', () => {
         const noCompanyId= {
             name: stationOne.name
         } as Station;
-        const response = await api.post(`${ API.STATION}`)
+        const response = await api.post(`${API.STATION}`)
             .send(noCompanyId)
             .expect(400);
         expect(response.body).toStrictEqual({ error: Errors.WRONG_STRUCTURE });
@@ -122,7 +122,7 @@ describe('CREATE Station', () => {
     it('should not create a Station with non-existent company_id', async () => {
         const stationWithWrongCompanyId = { ...stationOne } as Station;
         stationWithWrongCompanyId.company_id = createdCompanyId + 100;
-        const response = await api.post(`${ API.STATION}`)
+        const response = await api.post(`${API.STATION}`)
             .send(stationWithWrongCompanyId)
             .expect(404);
         expect(response.body).toStrictEqual({ error: Errors.COMPANY_NOT_EXIST });
@@ -132,7 +132,7 @@ describe('CREATE Station', () => {
         const stationWithWrongStationTypeId = { ...stationOne } as Station;
         stationWithWrongStationTypeId.company_id = createdCompanyId;
         stationWithWrongStationTypeId.station_type_id = createdStationTypeId + 100;
-        const response = await api.post(`${ API.STATION}`)
+        const response = await api.post(`${API.STATION}`)
             .send(stationWithWrongStationTypeId)
             .expect(404);
         expect(response.body).toStrictEqual({ error: Errors.STATION_TYPE_NOT_EXIST });
@@ -202,7 +202,7 @@ describe('UPDATE Station', () => {
         forUpdate.name = stationTwo.name;
         forUpdate.id = createdStationOneId;
 
-        const response = await api.put(`${ API.STATION}`)
+        const response = await api.put(`${API.STATION}`)
             .send(forUpdate)
             .expect(400);
 
@@ -214,7 +214,7 @@ describe('UPDATE Station', () => {
         forUpdate.name = stationOne.name;
         forUpdate.id = createdStationOneId;
 
-        const response = await api.put(`${ API.STATION}`)
+        const response = await api.put(`${API.STATION}`)
             .send(forUpdate)
             .expect(400);
 
@@ -226,7 +226,7 @@ describe('UPDATE Station', () => {
         forUpdate.company_id = createdCompanyId + 100;
         forUpdate.id = createdStationOneId;
 
-        const response = await api.put(`${ API.STATION}`)
+        const response = await api.put(`${API.STATION}`)
             .send(forUpdate)
             .expect(404);
 
@@ -238,7 +238,7 @@ describe('UPDATE Station', () => {
         forUpdate.station_type_id = createdStationTypeId + 100;
         forUpdate.id = createdStationOneId;
 
-        const response = await api.put(`${ API.STATION}`)
+        const response = await api.put(`${API.STATION}`)
             .send(forUpdate)
             .expect(404);
 
@@ -249,7 +249,7 @@ describe('UPDATE Station', () => {
         const forUpdate = { ...stationOne } as Station;
         forUpdate.id = createdStationOneId + 100;
 
-        const response = await api.put(`${ API.STATION}`)
+        const response = await api.put(`${API.STATION}`)
             .send(forUpdate)
             .expect(400);
 

@@ -1,8 +1,10 @@
 import express, { Request, Response } from 'express';
 import { CompanyRelationship } from '../models/company-relationship.model';
 import { Company, CompanyToCreate } from '../models/company.model';
+import { StationData } from '../models/station-data.model';
 import relationshipService from '../services/company-relationship.service';
 import companyService from '../services/company.service';
+import stationDataService from '../services/station-data.service';
 import { Errors } from '../utils/error.enums';
 import utils from '../utils/utils';
 
@@ -93,6 +95,38 @@ const deleteCompany = async (request: Request, response: Response) => {
     response.status(200).json({ message: `Deleted company ${companyId}` });
 };
 
+const getCompanyAllStationData = async (request: Request, response: Response) => {
+    const companyId = utils.parseId(request.params.id);
+    const companyIdSet = await traverseCompanyRelationshipTree(companyId);
+    let stationData: StationData[] = [];
+    if (companyIdSet.size > 0) {
+        stationData = await stationDataService.getStationDataByCompanyIDs(Array.from(companyIdSet));
+    }
+    response.status(200).json(stationData);
+};
+
+const traverseCompanyRelationshipTree = async (companyId: number, idSet: Set<number> = new Set<number>()) => {
+    if (idSet.has(companyId)) return idSet;
+
+    const company = await companyService.getCompanyByID(companyId).then(async (c: Company) => {
+        if (c.id) {
+            c.childrenIds = await relationshipService.getAllChildrenIDs(c.id);
+        }
+        return c;
+    });
+
+    if (!utils.isEmpty(company)) {
+        idSet.add(company.id);
+        for (const child of company.childrenIds) {
+            await traverseCompanyRelationshipTree(child.child_id, idSet);
+        }
+    } else {
+        throw new Error(Errors.COMPANY_NOT_EXIST);
+    }
+
+    return idSet;
+};
+
 companyRouter.post('/', createCompany);
 companyRouter.get('/all', getAllCompanies);
 companyRouter.get('/:id', getCompanyById);
@@ -100,5 +134,7 @@ companyRouter.put('/', updateCompany);
 companyRouter.post('/:id/add-child', addChild);
 companyRouter.post('/:id/remove-child', removeChild);
 companyRouter.delete('/:id', deleteCompany);
+
+companyRouter.get('/:id/station-data', getCompanyAllStationData);
 
 export default companyRouter;

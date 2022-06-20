@@ -8,8 +8,8 @@
     "dev": "ts-node-dev src/index.ts",
     "prod": "node build/index.js",
     "lint": "eslint --ext .ts .",
-    "test": "jest --verbose",
-    "test:watch": "jest --watch --verbose"
+    "test": "jest --verbose --runInBand",
+    "test:watch": "jest --watch --verbose --runInBand"
   },
   "author": "Alisher Aliev",
   "license": "ISC",

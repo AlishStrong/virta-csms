@@ -18,10 +18,16 @@ let existingId: number;
 
 beforeAll(async () => {
     await executeQuery('DELETE FROM `station_type`');
+    await executeQuery('DELETE FROM `company`');
+    await executeQuery('DELETE FROM `company_relationship`');
+    await executeQuery('DELETE FROM `station`');
 });
 
 afterAll(async () => {
     await executeQuery('DELETE FROM `station_type`');
+    await executeQuery('DELETE FROM `company`');
+    await executeQuery('DELETE FROM `company_relationship`');
+    await executeQuery('DELETE FROM `station`');
 });
 
 describe('CREATE Station Type', () => {
@@ -59,18 +65,6 @@ describe('CREATE Station Type', () => {
             .send(noMaxPower)
             .expect(400);
         expect(response.body).toStrictEqual({ error: Errors.WRONG_STRUCTURE });
-    });
-
-    it('should not create a Station Type with a manually set ID', async () => {
-        const manualID: StationType = {
-            id: 2,
-            name: 'manual ID',
-            maxPower: 200
-        };
-        const response = await api.post(`${API.STATION_TYPES}`)
-            .send(manualID)
-            .expect(500);
-        expect(response.body).toStrictEqual({ error: Errors.UNKNOWN_ISSUE });
     });
 });
 
