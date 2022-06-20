@@ -17,6 +17,7 @@ const executeQuery = async (sqlQuery: string, params?: any[]) => {
         if (error instanceof Error && error.message.includes('Duplicate entry')) {
             throw new Error(Errors.DUPLICATE_ENTRY);
         } else {
+            console.log(error);
             throw new Error(Errors.UNKNOWN_ISSUE);
         }
     } finally {

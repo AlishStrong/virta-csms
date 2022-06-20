@@ -3,7 +3,7 @@ import executeQuery from '../database/database';
 import { Company, CompanyToCreate } from '../models/company.model';
 
 const createCompany = async (companyToCreate: CompanyToCreate) => {
-    const result = await executeQuery('INSERT INTO `company` (`name`) VALUES (?)', Object.values(companyToCreate)) as ResultSetHeader;
+    const result = await executeQuery('INSERT INTO `company` (`name`) VALUES (?)', [companyToCreate.name]) as ResultSetHeader;
     return result.insertId;
 };
 

@@ -2,8 +2,8 @@ import { ResultSetHeader } from 'mysql2';
 import executeQuery from '../database/database';
 import { StationType, StationTypeToCreate } from '../models/station-type.model';
 
-const createStationType = async (stationToCreate: StationTypeToCreate): Promise<number> => {
-    const result = await executeQuery('INSERT INTO `station_type` (`name`, `maxPower`) VALUES (?, ?)', Object.values(stationToCreate)) as ResultSetHeader;
+const createStationType = async (s: StationTypeToCreate): Promise<number> => {
+    const result = await executeQuery('INSERT INTO `station_type` (`name`, `maxPower`) VALUES (?, ?)', [s.name, s.maxPower]) as ResultSetHeader;
     return result.insertId;
 };
 

@@ -1,4 +1,5 @@
 export enum API {
   STATION_TYPES = '/station-type',
-  COMPANY = '/company'
+  COMPANY = '/company',
+  STATION = '/station'
 }

@@ -29,6 +29,12 @@ const errorHandler = (error: Error, _request: Request, response: Response, next:
         case Errors.CHILD_NOT_EXIST:
             response.status(404).json({ error: error.message });
             break;
+        case Errors.COMPANY_NOT_EXIST:
+            response.status(404).json({ error: error.message });
+            break;
+        case Errors.STATION_TYPE_NOT_EXIST:
+            response.status(404).json({ error: error.message });
+            break;
         default:
             response.status(500).json({ error: Errors.UNKNOWN_ISSUE });
             break;
