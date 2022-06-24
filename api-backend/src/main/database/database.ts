@@ -1,6 +1,7 @@
 import mysql from 'mysql2/promise';
 import { Errors } from '../utils/error.enums';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const executeQuery = async (sqlQuery: string, params?: any[]) => {
     const connection = await mysql.createConnection({
         host: process.env.MYSQL_HOST,

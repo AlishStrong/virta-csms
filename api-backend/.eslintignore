@@ -1,0 +1,6 @@
+build/
+node_modules/
+eslintrc.js
+.eslintrc.js
+.api-bakcend/eslintrc.js
+./api-bakcend/eslintrc.js

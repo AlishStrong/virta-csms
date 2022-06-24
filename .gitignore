@@ -8,3 +8,7 @@ build/
 !.vscode/launch.json
 !.vscode/extensions.json
 .history/*
+
+# api-backend
+api-backend/node_modules/
+api-backend/build/

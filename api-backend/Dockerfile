@@ -1,8 +1,8 @@
 FROM node:16 as dev
 WORKDIR /home/node/app
-COPY package*.json ./
+COPY api-backend/package*.json ./
 RUN npm install
-COPY . .
+COPY api-backend .
 
 FROM dev as prod
 RUN npm run build

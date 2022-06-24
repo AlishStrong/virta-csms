@@ -12,13 +12,13 @@ from the project's root directory
 ```
 docker-compose up -d
 ```
-Using this command the API-service will listen on port `3001`.
+Using this command the `api-backend` service will listen on port `3001`.
 <br>
 MySQL container will have host port open on `3307`.
 <br>
 `mysql/` directory contains SQL-files for creating tables and populating them with some initial data, so that you can play around with some data straight away
 <br>
-The API-service on NodeJS uses `ts-node-dev` for auto-reloading in TypeScript projects. `docker-compose.yml` file was actually configured to share the volumes with `src/` sirectory. That is, if you do changes to the files in that directory, the app running inside the container will detect the changes and recompile 👍
+The `api-backend` service on NodeJS uses `ts-node-dev` for auto-reloading in TypeScript projects. `docker-compose.yml` file was actually configured to share the volumes with `src/` sirectory. That is, if you do changes to the files in that directory, the app running inside the container will detect the changes and recompile 👍
 
 ### **Option 2: Fully local run**
 Make sure that you have `node` installed, as well as a `MySQL` server!
@@ -35,24 +35,24 @@ You can use the SQL-files in the `mysql/` directory to create tables and populat
 
 **Important**
 <br>
-The project's root directory has file `.env` that is used to specify ports for the application to run on
+The `api-backend` project's root directory has file `.env` that is used to specify ports for the application to run on
 and data for connecting to your local `MySQL` server. If any of the data is different, then modify values in that file!
 
 ### **Option 3: Connecting to Docker database**
 You can also have your locally run NodeJS app being connected to the MySQL database in Docker container.
 <br>
-Execute steps of **Option 1** and **Option 2**. But make sure that `MYSQL_PORT` inside the `.env` file has correct value!
+Execute steps of **Option 1** and **Option 2**. But make sure that `MYSQL_PORT` inside the `api-backend/.env` file has correct value!
 <br>
 Here, Dockerized MySQL instance is exposing port `3307` to the host by default!.
 
 ## **Building the project**
-Open terminal in the project's root directory and run the follwoing command:
+Open terminal in the `api-backend` project's root directory and run the following command:
 ```
 npm run build
 ```
 This will call TypeScript to transpile the `.ts` files to `.js` and build the project. 
 <br>
-Built files will be visible in the `build/` directory.
+Built files will be visible in the `api-backend/build/` directory.
 <br>
 To run the built project execute the following command:
 ```

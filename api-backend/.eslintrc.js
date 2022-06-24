@@ -11,7 +11,7 @@ module.exports = {
     ],
     'parser': '@typescript-eslint/parser',
     'parserOptions': {
-        'project': './tsconfig.json'
+        'project': './api-backend/tsconfig.eslint.json'
     },
     'plugins': [
         '@typescript-eslint'
@@ -24,10 +24,10 @@ module.exports = {
         '@typescript-eslint/restrict-plus-operands': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
         '@typescript-eslint/no-unused-vars': [
-          'error',
-          { 'argsIgnorePattern': '^_' }
+            'error',
+            { 'argsIgnorePattern': '^_' }
         ],
-        "@typescript-eslint/no-misused-promises": 'off',
+        '@typescript-eslint/no-misused-promises': 'off',
         'no-case-declarations': 'off',
         'indent': [
             'error',
@@ -47,15 +47,15 @@ module.exports = {
             'always'
         ],
         'eol-last': [
-          'error', 'always'
+            'error', 'always'
         ],
         'eqeqeq': 'error',
         'no-trailing-spaces': 'error',
         'object-curly-spacing': [
-          'error', 'always'
+            'error', 'always'
         ],
         'arrow-spacing': [
-          'error', { 'before': true, 'after': true }
+            'error', { 'before': true, 'after': true }
         ],
         'no-console': 0,
     }
