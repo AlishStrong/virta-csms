@@ -1,18 +1,17 @@
-import _ from 'lodash';
 import { StepData } from './interfaces';
 import { stations } from './test-data';
 
-const canStopStation = (stationId: number, data: StepData[]): boolean => data[data.length - 1].totalChargingStations.has(stationId);
+const canStopStation = (stationId: number, newStepData: StepData): boolean => newStepData.totalChargingStations.has(stationId);
 
-export const stopStation = (stationId: number, data: StepData[]): void => {
+export const stopStation = (stationId: number, newStepData: StepData, data: StepData[]): void => {
     // step 1 check if station can be stoped
-    const canStop = canStopStation(stationId, data);
+    const canStop = canStopStation(stationId, newStepData);
     if (canStop) {
         // step 2 get the station object from DB because correct maxPower must be deducted!
         const station = stations.find(s => s.id === stationId); // TODO make a request to REST Client!
         if (station) {
             // step 3 create new StepData
-            const newStepData = _.cloneDeep(data[data.length - 1]);
+            // const newStepData = _.cloneDeep(data[data.length - 1]);
 
             // step 4 name StepData.step = `Stop station ${stationId}`
             newStepData.step = `Stop station ${stationId}`;
@@ -36,11 +35,12 @@ export const stopStation = (stationId: number, data: StepData[]): void => {
             // step 8 push the new StepData
             data.push(newStepData);
         }
+    } else {
+        console.log(`Could not Stop station ${stationId}!`);
     }
 };
 
-export const stopAllStations = (data: StepData[]): void => {
-    const newStepData = _.cloneDeep(data[data.length - 1]);
+export const stopAllStations = (newStepData: StepData, data: StepData[]): void => {
     newStepData.step = 'Stop station all';
     newStepData.companies = [];
     newStepData.totalChargingStations.clear();

@@ -12,3 +12,7 @@ build/
 # api-backend
 api-backend/node_modules/
 api-backend/build/
+
+# script-parser
+script-parser/node_modules/
+script-parser/build/

@@ -1,8 +1,10 @@
-import { StepData } from '../interfaces';
-import { startAllStations, startStation } from '../start-command';
-import { stations } from '../test-data';
+import _ from 'lodash';
+import { StepData } from '../main/interfaces';
+import { startAllStations, startStation } from '../main/start-command';
+import { stations } from '../main/test-data';
 
 const data: StepData[] = [];
+let newStepData: StepData;
 
 beforeAll(() => {
     const beginTimestamp = new Date();
@@ -16,8 +18,12 @@ beforeAll(() => {
     data.push(beginStep);
 });
 
+beforeEach(() => {
+    newStepData = _.cloneDeep(data[data.length - 1]);
+});
+
 test('Should add Start station 2 command', () => {
-    startStation(2, data);
+    startStation(2, newStepData, data);
     expect(data.length).toBe(2);
     const lastRecord = data[data.length - 1];
     expect(lastRecord.step).toBe('Start station 2');
@@ -28,7 +34,7 @@ test('Should add Start station 2 command', () => {
 });
 
 test('Should add Start station 3 command', () => {
-    startStation(3, data);
+    startStation(3, newStepData, data);
     expect(data.length).toBe(3);
     const lastRecord = data[data.length - 1];
     expect(lastRecord.step).toBe('Start station 3');
@@ -40,7 +46,7 @@ test('Should add Start station 3 command', () => {
 });
 
 test('Should add Start station 1 command', () => {
-    startStation(1, data);
+    startStation(1, newStepData, data);
     expect(data.length).toBe(4);
     const lastRecord = data[data.length - 1];
     expect(lastRecord.step).toBe('Start station 1');
@@ -53,7 +59,7 @@ test('Should add Start station 1 command', () => {
 });
 
 test('Should not add Start station 2 command again', () => {
-    startStation(2, data);
+    startStation(2, newStepData, data);
     expect(data.length).toBe(4);
     const lastRecord = data[data.length - 1];
     expect(lastRecord.step).toBe('Start station 1');
@@ -66,7 +72,7 @@ test('Should not add Start station 2 command again', () => {
 });
 
 test('Should not start a station that does not exist', () => {
-    startStation(20, data);
+    startStation(20, newStepData, data);
     expect(data.length).toBe(4);
     const lastRecord = data[data.length - 1];
     expect(lastRecord.step).toBe('Start station 1');
@@ -79,14 +85,9 @@ test('Should not start a station that does not exist', () => {
 });
 
 test('Should start all stations correctly', () => {
-    startAllStations(data);
+    startAllStations(newStepData, data);
     expect(data.length).toBe(5);
     const lastRecord = data[data.length - 1];
     expect(lastRecord.step).toBe('Start station all');
     expect(lastRecord.totalChargingPower).toBe(stations.reduce((pr, c) => pr += c.maxPower, 0));
 });
-
-it('show the result', () => {
-    console.log(data);
-});
-

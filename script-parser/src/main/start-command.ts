@@ -1,8 +1,7 @@
-import _ from 'lodash';
 import { Company, Station, StepData } from './interfaces';
 import { companyEntities, stations } from './test-data';
 
-const canStartStation = (stationId: number, data: StepData[]): boolean => !data[data.length - 1].totalChargingStations.has(stationId);
+const canStartStation = (stationId: number, newStepData: StepData): boolean => !newStepData.totalChargingStations.has(stationId);
 
 const addOrUpdateCompany = (companyId: number, station: Station, data: StepData): void => {
     let addOrUpdateCompany = data.companies.find(c => c.id === companyId);
@@ -21,15 +20,15 @@ const addOrUpdateCompany = (companyId: number, station: Station, data: StepData)
     }
 };
 
-export const startStation = (stationId: number, data: StepData[]): void => {
+export const startStation = (stationId: number, newStepData: StepData, data: StepData[]): void => {
     // step 1 check if station can be started
-    const canStart = canStartStation(stationId, data);
+    const canStart = canStartStation(stationId, newStepData);
     if (canStart) {
         // step 2 get the station object from DB
         const station = stations.find(s => s.id === stationId); // TODO make a request to REST Client!
         if (station) {
-            // step 3 create new StepData object
-            const newStepData = _.cloneDeep(data[data.length - 1]);
+            // // step 3 create new StepData object
+            // const newStepData = _.cloneDeep(data[data.length - 1]);
 
             // step 4 name StepData.step = `Start station ${stationId}`
             newStepData.step = `Start station ${stationId}`;
@@ -53,19 +52,24 @@ export const startStation = (stationId: number, data: StepData[]): void => {
                 addOrUpdateCompany(ce.parent_id, station, newStepData);
             }
 
+            newStepData.companies.sort((a: Company, b: Company) => a.id - b.id);
             // step 9 push the new StepData
             data.push(newStepData);
+        } else {
+            console.log(`Station ${stationId} does not exist!`);
         }
+    } else {
+        console.log(`Station ${stationId} is already started!`);
     }
 };
 
-export const startAllStations = (data: StepData[]): void => {
-    const newStepData = _.cloneDeep(data[data.length - 1]);
+export const startAllStations = (newStepData: StepData, data: StepData[]): void => {
+    // const newStepData = _.cloneDeep(data[data.length - 1]);
     newStepData.step = 'Start station all';
 
     // TODO make a request to REST Client!
     for (const station of stations) {
-        const canStart = canStartStation(station.id, data);
+        const canStart = canStartStation(station.id, newStepData);
         if (canStart) {
             newStepData.totalChargingPower += station.maxPower;
             newStepData.totalChargingStations.add(station.id);
@@ -81,5 +85,6 @@ export const startAllStations = (data: StepData[]): void => {
         }
     }
 
+    newStepData.companies.sort((a: Company, b: Company) => a.id - b.id);
     data.push(newStepData);
 };
