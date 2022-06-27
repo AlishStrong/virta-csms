@@ -3,12 +3,12 @@ import axios, { AxiosResponse } from 'axios';
 import { Station, StationEntity, StationTypeEntity } from '../models/station.model';
 
 const getStationTypeById = async (stationTypeId: number): Promise<number> => {
-    return await axios.get<StationTypeEntity>(`http://localhost:3001/station-type/${stationTypeId}`)
+    return await axios.get<StationTypeEntity>(`http://${process.env.CLIENT_HOST}:${process.env.CLIENT_PORT}/station-type/${stationTypeId}`)
         .then((response: AxiosResponse<StationTypeEntity>) => response.data.maxPower);
 };
 
 export const getStationById = async (stationId: number): Promise<Station> => {
-    return await axios.get<StationEntity>(`http://localhost:3001/station/${stationId}`)
+    return await axios.get<StationEntity>(`http://${process.env.CLIENT_HOST}:${process.env.CLIENT_PORT}/station/${stationId}`)
         .then(async (response: AxiosResponse<StationEntity>) => {
             if (response.data.station_type_id) {
                 const station: Station = {
@@ -28,7 +28,7 @@ export const getStationById = async (stationId: number): Promise<Station> => {
 };
 
 export const getAllStations = async () => {
-    return await axios.get<StationEntity[]>('http://localhost:3001/station/all')
+    return await axios.get<StationEntity[]>(`http://${process.env.CLIENT_HOST}:${process.env.CLIENT_PORT}/station/all`)
         .then(async (response: AxiosResponse<StationEntity[]>) => {
             if (response.data.length > 0) {
                 return Promise.all(response.data

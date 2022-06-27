@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import readline from 'readline';
 import { StepData } from './main/models/step-data.model';
 import { UserCommand } from './main/models/user-command.model';

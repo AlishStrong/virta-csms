@@ -4,7 +4,7 @@ export enum Errors {
   INCORRECT_ID = 'Incorrect ID',
   WRONG_STRUCTURE = 'Wrong values were supplied',
   DUPLICATE_ENTRY = 'The entry is a duplicate or has a unique key violation',
-  COMPANY_RELATIONSHIP = 'Supplied child copmany already has a parent',
+  COMPANY_RELATIONSHIP = 'Supplied child company already has a parent',
   COMPANY_PARENTHOOD = 'Supplied parent and child companies have no relation',
   PARENT_NOT_EXIST = 'Parent company does not exist',
   CHILD_NOT_EXIST = 'Child company does not exist',
