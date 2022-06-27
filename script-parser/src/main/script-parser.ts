@@ -72,6 +72,15 @@ const processEnd = (timestamp: Date, data: StepData[]): boolean => {
     }
 };
 
+/**
+ * Determines what was the type of user's command and calls an appropriate function for that
+ * This and other functions here will notify user if the command was wrong
+ *
+ * @param command UserCommand object, which type-property is used in the switch
+ * @param timestamp reference for correct records of timestamps for each StepData
+ * @param data StepData-array for populate
+ * @returns boolean of the processing operation
+ */
 export const processUserCommand = async (command: UserCommand, timestamp: Date, data: StepData[]): Promise<boolean> => {
     switch (command.type) {
         case 'Begin':

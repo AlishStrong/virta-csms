@@ -1,8 +1,15 @@
 ## Assignment implementation by Alisher Aliev for Virta Ltd.
-This an implementation of the assignment that consists of a NodeJS API service
-and a MySQL database service
+This an implementation of the assignment that consists of a NodeJS API service - `api-backend` (Task 1), another NodeJS project `script-parser` (Task 2), and a MySQL `database` service.
+<br>
 
-## **Start up**
+Here you can read how to start `api-backend` and `database` services.
+<br>
+
+Instructions about `script-parser` are located in README-file within the project's directory. 
+
+**NB!** `script-parser` requires `api-backend` and `database` services running to function correctly.
+
+## **Start up of api-backend and database services**
 There are several options to start the application
 ### **Option 1: Using Docker**
 If you have `Docker` and `Docker-Compose` installed on your device,

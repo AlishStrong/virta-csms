@@ -1,6 +1,12 @@
 export type CommandType = 'Begin' | 'End' | 'Wait' | 'Start station' | 'Stop station';
 
-
+/**
+ * Object class for classifying commands supplied by user
+ *
+ * Validy of the command's string is not done here; that's what script-parser.ts does.
+ * However, the fields will be uninitialized
+ * if the command string, supplied to the constructor, is malformed
+ */
 export class UserCommand {
     private _type?: CommandType;
     private _allArg?: 'all';
