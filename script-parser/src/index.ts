@@ -1,5 +1,5 @@
 import readline from 'readline';
-import { StepData } from './main/interfaces';
+import { StepData } from './main/models/step-data.model';
 import { UserCommand } from './main/models/user-command.model';
 import { processUserCommand } from './main/script-parser';
 
@@ -22,12 +22,12 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-const processLine = (line: string) => {
+const processLine = async (line: string) => {
     const command = new UserCommand(line);
     if (command.type === 'Begin' || (!timestamp && command.type === 'End')) {
         timestamp = new Date();
     }
-    const processed = processUserCommand(command, timestamp, data);
+    const processed = await processUserCommand(command, timestamp, data);
     if (processed && command.type === 'End' && data[data.length - 1].step === 'End') {
         rl.close();
     } else {

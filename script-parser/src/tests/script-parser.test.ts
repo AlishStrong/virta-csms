@@ -1,36 +1,43 @@
-import { StepData } from '../main/interfaces';
+import { getAllStations } from '../main/clients/station.client';
+import { Station } from '../main/models/station.model';
+import { StepData } from '../main/models/step-data.model';
 import { UserCommand } from '../main/models/user-command.model';
 import { processUserCommand } from '../main/script-parser';
-import { companyEntities, stations } from '../main/test-data';
 
 let data: StepData[] = [];
 let userCommand: UserCommand;
 const timestamp = new Date();
 
+let stations: Station[];
+
+beforeAll(async () => {
+    stations = await getAllStations();
+});
+
 describe('Parse Begin command', () => {
-    it ('should process Begin', () => {
+    it ('should process Begin', async () => {
         userCommand = new UserCommand('Begin');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         const lastRecord = data[data.length - 1];
         expect(data.length).toBe(1);
         expect(lastRecord.step).toBe('Begin');
         expect(lastRecord.timestamp).toBe(timestamp.valueOf());
     });
 
-    it('should not process wrongly composed Begin', () => {
+    it('should not process wrongly composed Begin', async () => {
         console.log = jest.fn();
         userCommand = new UserCommand('Begin wrong');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         const lastRecord = data[data.length - 1];
         expect(data.length).toBe(1);
         expect(lastRecord.step).toBe('Begin');
         expect(console.log).toHaveBeenCalledWith('Wrong command was supplied!');
     });
 
-    it('should not Begin twice', () => {
+    it('should not Begin twice', async () => {
         console.log = jest.fn();
         userCommand = new UserCommand('Begin');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         const lastRecord = data[data.length - 1];
         expect(data.length).toBe(1);
         expect(lastRecord.step).toBe('Begin');
@@ -43,28 +50,28 @@ describe('Parse End command', () => {
         data = [];
     });
 
-    it ('should process End after Begin', () => {
+    it ('should process End after Begin', async () => {
         userCommand = new UserCommand('Begin');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         userCommand = new UserCommand('End');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         const lastRecord = data[data.length - 1];
         expect(data.length).toBe(2);
         expect(lastRecord.step).toBe('End');
     });
 
-    it('should not process wrongly composed End', () => {
+    it('should not process wrongly composed End', async () => {
         console.log = jest.fn();
         userCommand = new UserCommand('End wrong');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         expect(data.length).toBe(0);
         expect(console.log).toHaveBeenCalledWith('Wrong command was supplied!');
     });
 
-    it('should not process End before Begin', () => {
+    it('should not process End before Begin', async () => {
         console.log = jest.fn();
         userCommand = new UserCommand('End');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         expect(data.length).toBe(0);
         expect(console.log).toHaveBeenCalledWith('You cannot End before Begin!');
     });
@@ -75,16 +82,16 @@ describe('Parse Wait command', () => {
         data = [];
     });
 
-    it('should increment timestamp by the Wait amount', () => {
+    it('should increment timestamp by the Wait amount', async () => {
         userCommand = new UserCommand('Begin');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
 
         const waitSec = 10;
         userCommand = new UserCommand(`Wait ${waitSec}`);
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
 
         userCommand = new UserCommand('End');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         const firstRecord = data[0];
         const lastRecord = data[data.length - 1];
         expect(data.length).toBe(2);
@@ -93,15 +100,15 @@ describe('Parse Wait command', () => {
         expect(lastRecord.timestamp).toBe(firstRecord.timestamp + waitSec * 1000);
     });
 
-    it('should not modify timestamp if the Wait amount is not given', () => {
+    it('should not modify timestamp if the Wait amount is not given', async () => {
         userCommand = new UserCommand('Begin');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
 
         userCommand = new UserCommand('Wait');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
 
         userCommand = new UserCommand('End');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         const firstRecord = data[0];
         const lastRecord = data[data.length - 1];
         expect(data.length).toBe(2);
@@ -110,15 +117,15 @@ describe('Parse Wait command', () => {
         expect(lastRecord.timestamp).toBe(firstRecord.timestamp);
     });
 
-    it('should not modify timestamp if the Wait command is wrong', () => {
+    it('should not modify timestamp if the Wait command is wrong', async () => {
         userCommand = new UserCommand('Begin');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
 
         userCommand = new UserCommand('Wait wrong');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
 
         userCommand = new UserCommand('End');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         const firstRecord = data[0];
         const lastRecord = data[data.length - 1];
         expect(data.length).toBe(2);
@@ -133,20 +140,20 @@ describe('Parse Start and Stop station commands', () => {
         data = [];
     });
 
-    it('should not Start station before Begin', () => {
+    it('should not Start station before Begin', async () => {
         console.log = jest.fn();
         userCommand = new UserCommand('Start station 1');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         expect(data.length).toBe(0);
         expect(console.log).toHaveBeenCalledWith('You cannot Start station before Begin!');
     });
 
-    it('should Start station 1', () => {
+    it('should Start station 1', async () => {
         userCommand = new UserCommand('Begin');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
 
         userCommand = new UserCommand('Start station 1');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
 
         const lastRecord = data[data.length - 1];
 
@@ -157,11 +164,11 @@ describe('Parse Start and Stop station commands', () => {
         expect(lastRecord.companies).toHaveLength(2);
     });
 
-    it('should not Start station twice', () => {
+    it('should not Start station twice', async () => {
         console.log = jest.fn();
 
         userCommand = new UserCommand('Start station 1');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         expect(console.log).toHaveBeenCalledWith('Station 1 is already started!');
 
         const lastRecord = data[data.length - 1];
@@ -171,11 +178,11 @@ describe('Parse Start and Stop station commands', () => {
         expect(lastRecord.companies).toHaveLength(2);
     });
 
-    it('should not Start station that does not exist', () => {
+    it('should not Start station that does not exist', async () => {
         console.log = jest.fn();
 
         userCommand = new UserCommand('Start station 111');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         expect(console.log).toHaveBeenCalledWith('Station 111 does not exist!');
 
         const lastRecord = data[data.length - 1];
@@ -185,11 +192,11 @@ describe('Parse Start and Stop station commands', () => {
         expect(lastRecord.companies).toHaveLength(2);
     });
 
-    it('should not parse a wrong Start command', () => {
+    it('should not parse a wrong Start command', async () => {
         console.log = jest.fn();
 
         userCommand = new UserCommand('Start station wrong');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         expect(console.log).toHaveBeenCalledWith('Wrong command was supplied!');
 
         const lastRecord = data[data.length - 1];
@@ -199,21 +206,21 @@ describe('Parse Start and Stop station commands', () => {
         expect(lastRecord.companies).toHaveLength(2);
     });
 
-    it('should Start station all', () => {
+    it('should Start station all', async () => {
         userCommand = new UserCommand('Start station all');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
 
         const lastRecord = data[data.length - 1];
         expect(data.length).toBe(3);
         expect(lastRecord.step).toBe('Start station all');
+
         expect([...lastRecord.totalChargingStations]).toStrictEqual(stations.map(s => s.id));
         expect(lastRecord.totalChargingPower).toBe(stations.reduce((prev, curr) => prev + curr.maxPower, 0));
-        expect(lastRecord.companies).toHaveLength(companyEntities.length);
     });
 
-    it('should Stop station 1', () => {
+    it('should Stop station 1', async () => {
         userCommand = new UserCommand('Stop station 1');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         const lastRecord = data[data.length - 1];
         expect(data.length).toBe(4);
         expect(lastRecord.step).toBe('Stop station 1');
@@ -222,11 +229,11 @@ describe('Parse Start and Stop station commands', () => {
         expect([...(new Set(lastRecord.companies.flatMap(c => [...c.chargingStations])))]).toStrictEqual(stations.filter(s => s.id !== 1).map(s => s.id));
     });
 
-    it('should not Stop station twice', () => {
+    it('should not Stop station twice', async () => {
         console.log = jest.fn();
 
         userCommand = new UserCommand('Stop station 1');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         expect(console.log).toHaveBeenCalledWith('Could not Stop station 1!');
 
         const lastRecord = data[data.length - 1];
@@ -237,11 +244,11 @@ describe('Parse Start and Stop station commands', () => {
         expect([...(new Set(lastRecord.companies.flatMap(c => [...c.chargingStations])))]).toStrictEqual(stations.filter(s => s.id !== 1).map(s => s.id));
     });
 
-    it('should not Stop station that does not exist', () => {
+    it('should not Stop station that does not exist', async () => {
         console.log = jest.fn();
 
         userCommand = new UserCommand('Stop station 111');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         expect(console.log).toHaveBeenCalledWith('Could not Stop station 111!');
 
         const lastRecord = data[data.length - 1];
@@ -252,11 +259,11 @@ describe('Parse Start and Stop station commands', () => {
         expect([...(new Set(lastRecord.companies.flatMap(c => [...c.chargingStations])))]).toStrictEqual(stations.filter(s => s.id !== 1).map(s => s.id));
     });
 
-    it('should not parse a wrong Stop command', () => {
+    it('should not parse a wrong Stop command', async () => {
         console.log = jest.fn();
 
         userCommand = new UserCommand('Stop station wrong');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         expect(console.log).toHaveBeenCalledWith('Wrong command was supplied!');
 
         const lastRecord = data[data.length - 1];
@@ -267,9 +274,9 @@ describe('Parse Start and Stop station commands', () => {
         expect([...(new Set(lastRecord.companies.flatMap(c => [...c.chargingStations])))]).toStrictEqual(stations.filter(s => s.id !== 1).map(s => s.id));
     });
 
-    it ('should Stop station all', () => {
+    it ('should Stop station all', async () => {
         userCommand = new UserCommand('Stop station all');
-        processUserCommand(userCommand, timestamp, data);
+        await processUserCommand(userCommand, timestamp, data);
         const lastRecord = data[data.length - 1];
         expect(data.length).toBe(5);
         expect(lastRecord.step).toBe('Stop station all');

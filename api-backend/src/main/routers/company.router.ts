@@ -117,8 +117,8 @@ const traverseCompanyRelationshipTree = async (companyId: number, idSet: Set<num
 
     if (!utils.isEmpty(company)) {
         idSet.add(company.id);
-        for (const child of company.childrenIds) {
-            await traverseCompanyRelationshipTree(child.child_id, idSet);
+        for (const child_id of company.childrenIds) {
+            await traverseCompanyRelationshipTree(child_id, idSet);
         }
     } else {
         throw new Error(Errors.COMPANY_NOT_EXIST);

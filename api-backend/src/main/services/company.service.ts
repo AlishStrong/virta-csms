@@ -12,7 +12,10 @@ const getAllCompanies = async (): Promise<Company[]> => {
 };
 
 const getCompanyByID = async (companyId: number): Promise<Company> => {
-    const result = await executeQuery('SELECT * FROM `company` WHERE `id` = ?', [companyId]) as Company[];
+    const queryStr = 'SELECT c.id as id, c.name as name, cr.parent_id FROM company as c ' +
+  'LEFT JOIN company_relationship as cr ON (cr.child_id = c.id) ' +
+  'WHERE c.id = ?';
+    const result = await executeQuery(queryStr, [companyId]) as Company[];
     if (result.length > 0) {
         return result[0];
     } else {

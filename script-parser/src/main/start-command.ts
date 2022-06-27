@@ -1,5 +1,9 @@
-import { Company, Station, StepData } from './interfaces';
-import { companyEntities, stations } from './test-data';
+import _ from 'lodash';
+import { getCompanyEntityById } from './clients/company-entity.client';
+import { getAllStations, getStationById } from './clients/station.client';
+import { Company } from './models/company.model';
+import { Station } from './models/station.model';
+import { StepData } from './models/step-data.model';
 
 const canStartStation = (stationId: number, newStepData: StepData): boolean => !newStepData.totalChargingStations.has(stationId);
 
@@ -20,13 +24,13 @@ const addOrUpdateCompany = (companyId: number, station: Station, data: StepData)
     }
 };
 
-export const startStation = (stationId: number, newStepData: StepData, data: StepData[]): void => {
+export const startStation = async (stationId: number, newStepData: StepData, data: StepData[]) => {
     // step 1 check if station can be started
     const canStart = canStartStation(stationId, newStepData);
     if (canStart) {
         // step 2 get the station object from DB
-        const station = stations.find(s => s.id === stationId); // TODO make a request to REST Client!
-        if (station) {
+        const station = await getStationById(stationId);
+        if (!_.isEmpty(station)) {
             // // step 3 create new StepData object
             // const newStepData = _.cloneDeep(data[data.length - 1]);
 
@@ -44,9 +48,9 @@ export const startStation = (stationId: number, newStepData: StepData, data: Ste
 
             // step 8 add/update parent companies in the data.companies
             for (
-                let ce = companyEntities.find(c => c.id === station.company_id); // TODO make a request to REST Client!
-                ce && ce.parent_id;
-                ce = companyEntities.find(c => c.id === ce?.parent_id) // TODO make a request to REST Client!
+                let ce = await getCompanyEntityById(station.company_id);
+                !_.isEmpty(ce) && ce.parent_id;
+                ce = await getCompanyEntityById(ce.parent_id)
             ) {
                 // company has a parent
                 addOrUpdateCompany(ce.parent_id, station, newStepData);
@@ -63,11 +67,11 @@ export const startStation = (stationId: number, newStepData: StepData, data: Ste
     }
 };
 
-export const startAllStations = (newStepData: StepData, data: StepData[]): void => {
+export const startAllStations = async (newStepData: StepData, data: StepData[]) => {
     // const newStepData = _.cloneDeep(data[data.length - 1]);
     newStepData.step = 'Start station all';
 
-    // TODO make a request to REST Client!
+    const stations = await getAllStations();
     for (const station of stations) {
         const canStart = canStartStation(station.id, newStepData);
         if (canStart) {
@@ -76,9 +80,9 @@ export const startAllStations = (newStepData: StepData, data: StepData[]): void 
             addOrUpdateCompany(station.company_id, station, newStepData);
 
             for (
-                let ce = companyEntities.find(c => c.id === station.company_id); // TODO make a request to REST Client!
+                let ce = await getCompanyEntityById(station.company_id);
                 ce && ce.parent_id;
-                ce = companyEntities.find(c => c.id === ce?.parent_id) // TODO make a request to REST Client!
+                ce = await getCompanyEntityById(ce.parent_id)
             ) {
                 addOrUpdateCompany(ce.parent_id, station, newStepData);
             }

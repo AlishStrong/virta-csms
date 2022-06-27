@@ -144,7 +144,7 @@ describe('UPDATE Company', () => {
 
                 const parentCompany = parentCompanyResponse.body as Company;
                 expect(parentCompany.childrenIds).toHaveLength(1);
-                expect(parentCompany.childrenIds).toContainEqual({ child_id: createdCompanyTwoId });
+                expect(parentCompany.childrenIds).toContainEqual(createdCompanyTwoId);
             });
 
             it('should not add a child Company that already has a parent', async () => {
@@ -280,7 +280,7 @@ describe('DELETE Company', () => {
             .expect(200);
         const allCompaniesBefore = readAllBeforeResponse.body as Company[];
 
-        expect(allCompaniesBefore.find(c => c.id === createdCompanyOneId)?.childrenIds).toContainEqual({ child_id: createdCompanyTwoId });
+        expect(allCompaniesBefore.find(c => c.id === createdCompanyOneId)?.childrenIds).toContain(createdCompanyTwoId);
 
         const response = await api.delete(`${API.COMPANY}/${createdCompanyTwoId}`)
             .expect(200);

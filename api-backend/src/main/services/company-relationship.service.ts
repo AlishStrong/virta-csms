@@ -12,7 +12,7 @@ const removeRelationship = async (parentId: number, childId: number) => {
 
 const getAllChildrenIDs = async (parentId: number) => {
     const result = await executeQuery('SELECT `child_id` FROM `company_relationship` WHERE `parent_id` = ? ORDER BY `child_id`', [parentId]) as Pick<CompanyRelationship, 'child_id'>[];
-    return result;
+    return result.map(obj => obj.child_id);
 };
 
 const isOrphan = async (childId: number): Promise<boolean> => {

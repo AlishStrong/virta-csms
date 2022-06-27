@@ -1,15 +1,16 @@
-import { StepData } from './interfaces';
-import { stations } from './test-data';
+import _ from 'lodash';
+import { getStationById } from './clients/station.client';
+import { StepData } from './models/step-data.model';
 
 const canStopStation = (stationId: number, newStepData: StepData): boolean => newStepData.totalChargingStations.has(stationId);
 
-export const stopStation = (stationId: number, newStepData: StepData, data: StepData[]): void => {
+export const stopStation = async (stationId: number, newStepData: StepData, data: StepData[]) => {
     // step 1 check if station can be stoped
     const canStop = canStopStation(stationId, newStepData);
     if (canStop) {
         // step 2 get the station object from DB because correct maxPower must be deducted!
-        const station = stations.find(s => s.id === stationId); // TODO make a request to REST Client!
-        if (station) {
+        const station = await getStationById(stationId);
+        if (!_.isEmpty(station)) {
             // step 3 create new StepData
             // const newStepData = _.cloneDeep(data[data.length - 1]);
 
